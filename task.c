@@ -6,11 +6,32 @@
 
 
 static struct tasklet_struct* my_tasklet;
-
+static unsigned long flags;
+static int counter =0;
 static void tasklet_func(unsigned long data){
 
-	pr_info("performing tasklet function, changing %ld to 1\n", data );
-
+	
+	local_irq_save(flags);
+	if(irqs_disabled()){
+		pr_info("interrupts disabled inside the tasklet handler func\n");
+	}
+	else{
+		pr_info("interrupts are enabled inside the tasklet handler func\n");
+	}
+	
+	pr_info("value of counter : %d\n",counter);
+	pr_info("performing tasklet function\n" );
+	counter++;
+	pr_info("value of counter : %d\n",counter);
+	
+	
+	local_irq_restore(flags);
+	if(irqs_disabled()){
+		pr_info("interrupts disabled inside the tasklet handler func\n");
+	}
+	else{
+		pr_info("interrupts are enabled inside the tasklet handler func\n");
+	}
 	return;
 }
 
@@ -25,10 +46,13 @@ static int __init my_init(void){
 	} 
 	
 	
-	tasklet_init(my_tasklet,tasklet_func, 0);
+	tasklet_init(my_tasklet,tasklet_func, 0);		// third param is data for tasklet
+	
 	
 	tasklet_schedule(my_tasklet);
-
+	
+	
+	
 	
 	return 0;
 }
