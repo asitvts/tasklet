@@ -98,9 +98,9 @@ static int __init my_init(void){
 	
 	tasklet_init(my_tasklet,tasklet_func, 0);		// third param is data for tasklet
 	
-	
+	pr_info("bitmask of softirq beore schedule: %d\n",local_softirq_pending());
 	tasklet_schedule(my_tasklet);
-	
+	pr_info("bitmask of softirq beore schedule: %d\n",local_softirq_pending());
 	
 	
 	
