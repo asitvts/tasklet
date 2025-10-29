@@ -86,13 +86,15 @@ static void tasklet_func(unsigned long data){
 	get_irq_status();
 	get_context_status();
 	
+	pr_info("id of the cpu that is running the tasklet : %d\n",smp_processor_id());
+	
 	return;
 }
 
 
 static int __init my_init(void){
 	
-	
+	pr_info("id of the cpu that is going to schedule tasklet : %d\n",smp_processor_id());
 	my_tasklet = kmalloc(sizeof(struct tasklet_struct), GFP_KERNEL);
 	if(!my_tasklet){
 		pr_info("error while allocating memory for my_tasklet\n");
