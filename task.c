@@ -3,6 +3,7 @@
 #include <linux/sched.h>
 #include <linux/interrupt.h>
 #include <linux/kernel.h>
+#include <linux/delay.h>
 
 
 
@@ -58,6 +59,14 @@ static void get_context_status(void){
 
 static void tasklet_func(unsigned long data){
 
+	mdelay(1000);
+	pr_info("--------checking status flags in tasklet_func--------\n");
+	
+	pr_info("status : 0x%lx, SCHED? %d, RUN? %d\n",
+        my_tasklet->state,
+        test_bit(TASKLET_STATE_SCHED, &my_tasklet->state),
+        test_bit(TASKLET_STATE_RUN, &my_tasklet->state));
+
 	
 	local_irq_save(flags);
 	get_irq_status();
@@ -100,7 +109,14 @@ static int __init my_init(void){
 	
 	pr_info("bitmask of softirq beore schedule: %d\n",local_softirq_pending());
 	tasklet_schedule(my_tasklet);
-	pr_info("bitmask of softirq beore schedule: %d\n",local_softirq_pending());
+	pr_info("--------checking status flags in tasklet_func--------\n");
+	
+	pr_info("status : 0x%lx, SCHED? %d, RUN? %d\n",
+        my_tasklet->state,
+        test_bit(TASKLET_STATE_SCHED, &my_tasklet->state),
+        test_bit(TASKLET_STATE_RUN, &my_tasklet->state));
+	pr_info("bitmask of softirq after schedule: %d\n",local_softirq_pending());
+	
 	
 	
 	
