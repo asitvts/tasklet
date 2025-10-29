@@ -8,16 +8,42 @@
 static struct tasklet_struct* my_tasklet;
 static unsigned long flags;
 static int counter =0;
+
+static void get_irq_status(void){
+
+	if(irqs_disabled()){
+		pr_info("interrupts disabled\n");
+	}
+	else{
+		pr_info("interrupts enabled\n");
+	}
+	
+	return;
+}
+
+static void get_context_status(void){
+
+	if(in_interrupt()){
+		pr_info("inside (interrupt context) right now\n");
+	}
+	else{
+		pr_info("inside (process context) right now\n");
+	}
+	
+	return;
+
+}
+
 static void tasklet_func(unsigned long data){
 
 	
 	local_irq_save(flags);
-	if(irqs_disabled()){
-		pr_info("interrupts disabled inside the tasklet handler func\n");
-	}
-	else{
-		pr_info("interrupts are enabled inside the tasklet handler func\n");
-	}
+	get_irq_status();
+	get_context_status();
+	
+	
+	printk(KERN_INFO "process name and id : %s  %d \n", current->comm, current->pid);		// thread name and id
+	
 	
 	pr_info("value of counter : %d\n",counter);
 	pr_info("performing tasklet function\n" );
@@ -26,12 +52,9 @@ static void tasklet_func(unsigned long data){
 	
 	
 	local_irq_restore(flags);
-	if(irqs_disabled()){
-		pr_info("interrupts disabled inside the tasklet handler func\n");
-	}
-	else{
-		pr_info("interrupts are enabled inside the tasklet handler func\n");
-	}
+	get_irq_status();
+	get_context_status();
+	
 	return;
 }
 
@@ -44,6 +67,11 @@ static int __init my_init(void){
 		pr_info("error while allocating memory for my_tasklet\n");
 		return -ENOMEM;
 	} 
+	
+	pr_info("in __init right now\n");
+	get_irq_status();
+	get_context_status();
+	pr_info("going inside the handler now\n");
 	
 	
 	tasklet_init(my_tasklet,tasklet_func, 0);		// third param is data for tasklet
