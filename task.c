@@ -5,6 +5,28 @@
 #include <linux/kernel.h>
 
 
+
+/*
+
+struct tasklet_struct {
+    struct tasklet_struct *next;    // Pointer to next tasklet in the list
+    unsigned long state;            // Tasklet's state (whether it's running, pending, etc.)
+    unsigned long data;             // Custom data passed to the tasklet function
+    void (*func)(unsigned long);    // Function to run when the tasklet executes
+};
+
+
+*/
+
+/*
+Function		Returns true when...					Context Type						Typical Code
+in_irq()		Code is running in hard interrupt 		(top-half) context Hard IRQ			Inside an actual hardware interrupt handler 
+in_softirq()	Code is running in softirq 				(bottom-half)context				SoftIRQ Inside softirq handler or tasklet
+in_interrupt()	Code is in any interrupt context 		(hard or soft)Hard IRQ or SoftIRQ	Most generic “am I in interrupt?” test
+
+*/
+
+
 static struct tasklet_struct* my_tasklet;
 static unsigned long flags;
 static int counter =0;
