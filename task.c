@@ -58,8 +58,7 @@ static void get_context_status(void){
 }
 
 static void tasklet_func(unsigned long data){
-
-	mdelay(1000);
+	
 	pr_info("--------checking status flags in tasklet_func--------\n");
 	
 	pr_info("status : 0x%lx, SCHED? %d, RUN? %d\n",
@@ -109,9 +108,14 @@ static int __init my_init(void){
 	
 	tasklet_init(my_tasklet,tasklet_func, 0);		// third param is data for tasklet
 	
+	local_bh_disable();
 	pr_info("bitmask of softirq beore schedule: %d\n",local_softirq_pending());
 	tasklet_schedule(my_tasklet);
+	mdelay(5000);
+	local_bh_enable();
 	pr_info("--------checking status flags in tasklet_func--------\n");
+
+	
 	
 	pr_info("status : 0x%lx, SCHED? %d, RUN? %d\n",
         my_tasklet->state,
